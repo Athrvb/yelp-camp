@@ -4,8 +4,16 @@ const campgrounds = require('../controllers/campgrounds');
 const catchAsync = require('../utils/catchAsync');
 const { isLoggedIn, isAuthor, validateCampground } = require('../middleware');
 const multer = require('multer');
-const { storage } = require('../cloudinary');
-const upload = multer({ storage });
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads')
+    },
+    filename: function (req, file, cb) {
+        console.log('Check this file: ', file);
+        cb(null, file.fieldname + '-' + Date.now() + '.' + file.mimetype.slice(6))
+    }
+})
+const upload = multer({ storage: storage })
 
 const Campground = require('../models/campground');
 
